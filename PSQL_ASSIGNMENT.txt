@@ -1,0 +1,107 @@
+CREATE TABLE authors (
+    id SERIAL NOT NULL PRIMARY KEY,
+    name varchar(50) NOT NULL
+);
+CREATE TABLE books (
+    id SERIAL NOT NULL PRIMARY KEY,
+    title varchar(100) NOT NULL,
+	author_id SERIAL NOT NULL,
+	FOREIGN KEY(author_id) REFERENCES authors(id)
+);
+CREATE TABLE reviews (
+    id SERIAL NOT NULL PRIMARY KEY,
+	rating INTEGER,
+	reviewer_id INTEGER,
+	FOREIGN KEY(reviewer_id) REFERENCES authors(id),
+	book_id SERIAL,
+	FOREIGN KEY(book_id) REFERENCES books(id)
+);
+
+=====================================================================================
+1)For each book, print the title of the book and name of the author
+
+ ANS--->  SELECT books.id, title, authors.id AS author_id,name AS author
+          FROM books
+          LEFT JOIN authors ON authors.id = books.author_id;
+=======================================================================================
+ 
+2)Return title of each book, along with the name of the author. 
+All authors should be included, even if they don’t have a book associated with them. 
+(You need to provide two possible solutions using Joins)
+
+
+ANS----> SELECT books.id, title,authors.id AS author_id, name AS author
+         FROM books
+         FULL JOIN authors ON authors.id = books.author_id;
+===============================================================================================
+
+
+
+3)Return title of each book, along with the name of the author, and the rating of a review. 
+Only show rows where the author of the book is also the author of the review. 
+
+
+===================================================================================================
+
+4)Prints an author’s id and the number of books they have authored. 
+(Check do you need two tables for this query). 
+ ANS----->SELECT authors.id AS author_id,count(books.id) AS no_of_books
+          FROM books
+          FULL JOIN authors ON authors.id = books.author_id
+          GROUP BY authors.id
+          ORDER BY authors.id;
+=====================================================================================================
+5)Print an author’s name and the number of books they have authored. 
+ ANS--->   SELECT name AS author, count(books.id) AS no_of_books
+           FROM books
+           FULL JOIN authors ON authors.id = books.author_id
+           GROUP BY authors.id
+           ORDER BY name;
+-------------------------------------------------------------------------------------------------------
+CREATE TABLE Phones(name Varchar(50), manufacturer varchar(100),price INTEGER,
+units sold INTEGER);
+-------------------------------------------------------------------------------------------------------
+1)Write a query that prints the name of manufacturers and total revenue (price * units_sold) for 
+all phones. Only print the manufacturers who have revenue greater than 2,000,00 for all phones they sold. 
+ ANS---> SELECT manufacturer, price*units_sold AS total_revenue from phones
+         WHERE  price*units_sold > 2000000;
+ 
+========================================================================================================
+
+2)Write a query that shows the names of only the second and third most expensive phones. 
+ AND--->SELECT name FROM phones
+        ORDER BY price DESC
+         LIMIT 2 OFFSET 1;
+============================================================================================================
+
+3)Write a query that will print the manufacturer of phones where the phone’s price is less than 170.
+ Also print all manufaturer that have created more than two phones. 
+ ANS----->SELECT DISTINCT manufacturer
+          FROM phones
+          WHERE price < 170 or manufacturer IN(
+	  SELECT manufacturer FROM phones
+	  GROUP BY manufacturer HAVING count(manufacturer) >2);
+
+============================================================================================================
+
+4)Write a query that prints the name and price for each phone. In addition, print out the ratio of the 
+phones price against max of all prices. Rename this third column to price_ratio.
+ ANS--->SELECT name, price, 1.0 * price/MAX(price) OVER() price_ratio 
+        FROM phones;
+===========================================================================================================
+
+5)Write a query that will print the name and price of all phones that sold greater than 5000 units. 
+
+ ANS--->SELECT name, price from phones WHERE units_sold > 5000; 
+============================================================================================================
+6)Write a query that will select the name and manufacturer for all phones created by Apple or Samsung. 
+ ANS-->SELECT name, manufacturer 
+       from phones
+       WHERE manufacturer='Apple' OR manufacturer='Samsung';
+========================================================================================================
+
+7)Write a query that will print the name and total_revenue of all phones with a total_revenue greater than 1,000,00. 
+ ANS--->SELECT name, price*units_sold AS total_revenue
+        from phones
+        WHERE price*units_sold > 1000000;
+=====================================================================================================================
